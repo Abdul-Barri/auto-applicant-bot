@@ -112,8 +112,45 @@ def handle_login(page, profile):
     
     return True
 
+def handle_captcha(page):
+    """Detects and handles CAPTCHAs."""
+    print("🛡️ Checking for CAPTCHA...")
+    # Common captcha selectors
+    captcha_frames = page.query_selector_all("iframe[src*='recaptcha'], iframe[src*='turnstile'], iframe[src*='hcaptcha']")
+    
+    if captcha_frames:
+        print("⚠️ CAPTCHA Detected!")
+        
+        # Strategy 1: Check for 2Captcha API Key
+        api_key = os.environ.get("2CAPTCHA_API_KEY")
+        if api_key:
+            print("🤖 Attempting auto-solve with 2Captcha...")
+            # Placeholder for actual 2Captcha logic
+            # verify_captcha(api_key, page.url, site_key)
+            print("❌ 2Captcha implementation pending.")
+            return False
+            
+        # Strategy 2: Human Handoff (Interactive Mode)
+        print("✋ Manual intervention required. Please solve the CAPTCHA in the browser.")
+        print("... Waiting 30 seconds for human solution ...")
+        # In a real headful mode, we would wait for a specific element to disappear
+        time.sleep(30)
+        
+        # Check if still present
+        if page.query_selector("iframe[src*='recaptcha']"):
+             print("❌ CAPTCHA still present after wait.")
+             return False
+             
+        print("✅ CAPTCHA seemingly cleared.")
+        return True
+    
+    return True
+
 def process_page(page, profile):
     print(f"👀 Scanning page: {page.url}")
+    
+    # 0. Check for CAPTCHA first
+    handle_captcha(page)
     
     # 1. Text Inputs & Textareas
     elements = page.query_selector_all("input:not([type='hidden']):not([type='password']):not([type='file']), textarea")
