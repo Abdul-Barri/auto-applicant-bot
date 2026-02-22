@@ -25,8 +25,9 @@ def save_queue(schools, filepath="target_schools.json"):
     print(f"📄 Saved queue to {filepath}")
 
 if __name__ == "__main__":
-    query = input("Enter search query (e.g. 'Masters Computer Science UK'): ")
-    if not query: query = "Masters Computer Science UK"
+    import sys
+    # Use CLI arg if provided, else default
+    query = sys.argv[1] if len(sys.argv) > 1 else "Masters Computer Science UK"
     
     schools = search_schools(query)
     save_queue(schools)
