@@ -41,3 +41,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      
+      - name: Test Docker Image
+        run: |
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master python --version
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:master pip list
