@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: bot
-        image: ghcr.io/abdul-barri/auto-applicant-bot:latest
+        image: ghcr.io/abdul-barri/auto-applicant-bot:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8501
