@@ -6,8 +6,8 @@ WORKDIR /app
 
 # Copy requirements (if any) and install dependencies
 # We pin the version to match the base image to avoid browser binary mismatch
-# Also installing google-generativeai for AI essay writing
-RUN pip install playwright==1.40.0 google-generativeai
+# Also installing google-generativeai for AI essay writing and streamlit for dashboard
+RUN pip install playwright==1.40.0 google-generativeai streamlit
 
 # Copy the application code
 COPY . .
