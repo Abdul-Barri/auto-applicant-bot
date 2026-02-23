@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auto-applicant-bot
+  labels:
+    app: auto-applicant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auto-applicant
+  template:
+    metadata:
+      labels:
+        app: auto-applicant
+    spec:
+      containers:
+      - name: bot
+        image: ghcr.io/abdul-barri/auto-applicant-bot:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: bot-secrets
+              key: gemini-api-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bot-service
+spec:
+  selector:
+    app: auto-applicant
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8501
+  type: LoadBalancer

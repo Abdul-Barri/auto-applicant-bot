@@ -54,3 +54,37 @@ jobs:
           IMAGE_ID="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build-and-push.outputs.digest }}"
           docker run --rm $IMAGE_ID python --version
           docker run --rm $IMAGE_ID pip list
+
+  deploy-test:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.9.0
+
+      - name: Create Secret (Mock)
+        run: |
+          kubectl create secret generic bot-secrets --from-literal=gemini-api-key="mock-key-for-ci"
+
+      - name: Deploy to Cluster
+        run: |
+          # Update manifest to use the image name from env if needed, or just apply
+          # We use sed to replace the image placeholder if it differs, but here we rely on 'latest'
+          kubectl apply -f k8s/deployment.yaml
+          
+      - name: Wait for Rollout
+        run: |
+          kubectl rollout status deployment/auto-applicant-bot --timeout=120s
+          
+      - name: Get Service URL
+        run: |
+          # In Kind/CI, LoadBalancers don't get real IPs easily, so we port-forward or just check status
+          kubectl get svc bot-service
+          echo "✅ Deployment Successful! Service is running on internal cluster IP."
