@@ -9,12 +9,11 @@ from playwright.sync_api import sync_playwright
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if API_KEY:
     genai.configure(api_key=API_KEY)
-    # Using gemini-1.5-flash for speed and broad availability. 
-    # Switch to 'gemini-2.0-flash' or 'gemini-1.5-pro' if needed.
+    # Using gemini-2.0-flash for higher rate limits and speed.
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.0-flash')
     except:
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash')
 else:
     print("⚠️ GEMINI_API_KEY not found. AI generation will be disabled.")
     model = None
