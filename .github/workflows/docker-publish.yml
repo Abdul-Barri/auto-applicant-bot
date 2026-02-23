@@ -80,7 +80,7 @@ jobs:
           
       - name: Wait for Rollout
         run: |
-          kubectl rollout status deployment/auto-applicant-bot --timeout=120s
+          kubectl rollout status deployment/auto-applicant-bot --timeout=360s
           
       - name: Get Service Info
         run: |
